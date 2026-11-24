@@ -128,6 +128,7 @@ const locandina = (sid, n) => CFG.locandine?.includes(`${sid}-${n}`) ? `<section
   <div class="poster-act"><button type="button" class="btn primary" data-share="assets/img/locandine/${sid}-${n}.png" data-nome="bocchi-league-${sid}-g${n}.png">Condividi</button><a class="btn" href="assets/img/locandine/${sid}-${n}.png" download="bocchi-league-${sid}-g${n}.png">Scarica</a></div></div>
 </section>` : '';
 const doc = f => /^https?:/.test(f) ? f : (CFG.docBase || '') + f;
+const navBtn = (sid, n, t) => n != null ? `<a class="btn" href="#giornate-${sid}-${n}">${t}</a>` : `<span class="btn" aria-disabled="true">${t}</span>`;
 const totale = id => CFG.totaleGiornate?.[id] ?? 38;
 
 /* ---------- viste ---------- */
@@ -144,7 +145,7 @@ V.home = async () => {
   const maxS = Math.max(...spesa.map(x => x[1]), 1);
   return `<div class="view">
   <section class="hero">
-    <picture><source media="(min-width: 700px)" srcset="assets/img/collage-largo.jpg"><img src="assets/img/collage-largo.jpg" alt="" fetchpriority="high"></picture>
+    <picture><source media="(min-width: 700px)" srcset="assets/img/collage-largo.jpg"><img src="assets/img/collage-alto.jpg" alt="" fetchpriority="high"></picture>
     <div class="hero-in">
       <img class="hero-logo" src="assets/img/logo.jpg" alt="">
       <h1>Bocchi League</h1>
@@ -285,7 +286,7 @@ V.giornate = async (sid, n) => {
       <section class="card section" style="padding:12px 10px"><h3 style="padding:4px 8px 0">Classifica dopo la ${g.n}ª</h3><div class="scroll">${tabella(st, g.classifica, false, g.n)}</div></section>
     </div>
     ${locandina(sid, g.n)}
-    <div class="nav-g"><a class="btn" href="#giornate-${sid}-${G[i - 1]?.n}" aria-disabled="${!G[i - 1]}">Precedente</a><a class="btn" href="#giornate-${sid}-${G[i + 1]?.n ?? st.prossime?.[0]?.n}" aria-disabled="${!G[i + 1] && !st.prossime?.length}">Successiva</a></div>
+    <div class="nav-g">${navBtn(sid, G[i - 1]?.n, 'Precedente')}${navBtn(sid, G[i + 1]?.n ?? st.prossime?.[0]?.n, 'Successiva')}</div>
   </div>`;
 };
 function chipsGiornate(st, att) {
@@ -301,7 +302,7 @@ function giornataFutura(st, f) {
     ${chipsStagione(st.id, 'giornate')}
     ${chipsGiornate(st, f.n)}
     <div class="matches">${f.partite.map(p => fixture(st.id, p)).join('')}</div>
-    <div class="nav-g"><a class="btn" href="#giornate-${st.id}-${prev}" aria-disabled="${!prev}">Precedente</a><a class="btn" href="#giornate-${st.id}-${next}" aria-disabled="${!next}">Successiva</a></div>
+    <div class="nav-g">${navBtn(st.id, prev, 'Precedente')}${navBtn(st.id, next, 'Successiva')}</div>
   </div>`;
 }
 function dopoGiornate(sid, n) {
