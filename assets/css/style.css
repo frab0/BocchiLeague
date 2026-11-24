@@ -51,6 +51,7 @@ p{margin:0}
 .tabbar svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .tabbar a.on{color:var(--red)}
 @media(min-width:900px){.topnav{display:flex}.tabbar{display:none}body{padding-bottom:0}}
+@media(max-width:899px){.topbar{display:none}main{padding-top:env(safe-area-inset-top)}}
 
 /* struttura */
 main{display:block;max-width:1080px;margin:0 auto;padding:0 max(4vw,16px) 40px;outline:none}
