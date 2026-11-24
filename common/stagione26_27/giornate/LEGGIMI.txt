@@ -1,0 +1,1 @@
+Carica qui i PDF delle giornate 26/27 esportati dall'app, uno per giornata (es. giornata_12.pdf).

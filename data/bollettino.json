@@ -1,0 +1,51 @@
+[
+ {
+  "id": 5,
+  "data": "2026-06-22",
+  "titolo": "Quota dell'ultimo classificato",
+  "tipo": "testo",
+  "testo": [
+   "Si stabilisce che la quota dell'ultimo classificato Mister Pepaj verrà versata in fase di asta come quota di iscrizione per il primo classificato."
+  ]
+ },
+ {
+  "id": 4,
+  "data": "2026-05-18",
+  "titolo": "Esito dell'indagine sulla 37ª giornata",
+  "tipo": "testo",
+  "testo": [
+   "A seguito delle controversie emerse nella giornata di domenica 17 maggio 2026 (dove, secondo le accuse del Mister Romano, i Mister Bersani e Pepaj avrebbero fatto un accordo volto a favorire il Mister Bersani, in piena corsa per il titolo, presumibilmente a seguito di un compenso a favore del Mister Pepaj che avrebbe omesso deliberatamente l'invio della formazione per la 37ª giornata).",
+   "La Federazione ha condotto un'indagine approfondita, accertando **l'assenza** di irregolarità o episodi di corruzione che possano aver compromesso la regolarità del campionato in alcun modo.",
+   "La Federazione conferma che si è verificato un errore, dovuto a una dimenticanza in **assoluta buona fede**, sanzionato come previsto dal regolamento.",
+   "L'Organo federale si riserva la possibilità di valutare ed eventualmente introdurre nuovi controlli e regole per le stagioni future.",
+   "Infine la Federazione coglie l'occasione per congratularsi con i contendenti al titolo per la fantastica stagione e che vinca il migliore (...sappiamo tutti di chi si parla...)."
+  ]
+ },
+ {
+  "id": 3,
+  "data": "2026-02-07",
+  "titolo": "Procedura d'ufficio sullo scambio post asta di riparazione",
+  "tipo": "testo",
+  "testo": [
+   "A seguito di uno scambio effettuato post asta di riparazione e date diverse segnalazioni anonime, i mister Romano e Camuzzi sono tenuti a presentare alla Presidenza la loro cronologia delle transazioni digitali (PayPal, Postepay, Revolut) relativa alle ultime 72 ore. L'operazione in oggetto, giudicata priva di coerenza tecnico-tattica e potenzialmente fraudolenta, ha attivato una procedura d'ufficio per grave violazione dell'etica sportiva."
+  ]
+ },
+ {
+  "id": 2,
+  "data": "2025-12-21",
+  "titolo": "Allegato agli atti",
+  "tipo": "immagine",
+  "immagine": "assets/img/bollettino-2025-12-21.jpg"
+ },
+ {
+  "id": 1,
+  "data": "2024-10-02",
+  "titolo": "Ineluttabile",
+  "tipo": "citazione",
+  "testo": [
+   "\"Piscitelli si presentò e mi disse 'Buonasera, io sono Diabolik'. E io gli risposi 'Sono l'ispettore Ginko'.\""
+  ],
+  "fonte": "La Ragione Di Stato (@ragionedistato)",
+  "link": "https://twitter.com/ragionedistato/status/1841414304974717087"
+ }
+]

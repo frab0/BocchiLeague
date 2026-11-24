@@ -1,0 +1,60 @@
+# Ogni volta che si carica qualcosa sul ramo main (per esempio il PDF di una giornata):
+# 1) rigenera i dati del sito dai PDF, 2) li salva nel repository, 3) pubblica il sito.
+name: Aggiorna e pubblica il sito
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pubblica
+  cancel-in-progress: false
+
+jobs:
+  aggiorna:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installa gli strumenti per leggere i PDF
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rigenera i dati
+        run: |
+          pip install -q openpyxl pillow
+          python tools/aggiorna.py | tee -a "$GITHUB_STEP_SUMMARY"
+          python tools/locandina.py | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Salva i dati aggiornati
+        run: |
+          git config user.name "Federazione Bocchi League"
+          git config user.email "actions@users.noreply.github.com"
+          git add data assets/img/locandine assets/img/og.jpg
+          if git diff --cached --quiet; then
+            echo "Nessun dato nuovo"
+          else
+            git commit -m "Aggiorna dati della lega"
+            git push
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

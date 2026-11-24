@@ -1,0 +1,9 @@
+{
+  "mister": ["Nico Pus", "gpepss", "Pistolero", "Yara Gambirasio", "frab", "simobers"],
+  "stagioni": {
+    "26-27": {"Kefir FC": "Nico Pus", "FC OverPerformers": "gpepss", "Franciscum FC": "Pistolero", "Real Betlemme": "Yara Gambirasio", "SC CortoMuso": "frab", "SPARA ROGGERDAM": "simobers"},
+    "25-26": {"Franciscum F.C.": "Pistolero", "THE ROONEY": "simobers", "Real Betlemme": "Yara Gambirasio", "PROVOLONI FC": "Nico Pus", "S.C. Corto Muso": "frab", "OverPerformers": "gpepss"},
+    "24-25": {"S.C. Corto Muso": "frab", "Real Betlemme": "Yara Gambirasio", "Ignoto uno": "Pistolero", "HERTA VERNELLO": "simobers", "Milan e Shiro": "gpepss", "duemilasei FC": "Nico Pus"},
+    "23-24": {"Milan e Shiro": "gpepss", "Real Betlemme": "Yara Gambirasio", "S.C. Corto Muso": "frab", "udinegre": "Pistolero", "duemilaotto FC": "Nico Pus", "HERTA VERNELLO": "simobers"}
+  }
+}

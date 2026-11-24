@@ -1,0 +1,139 @@
+{
+ "lega": "Bocchi League",
+ "fondazione": 2023,
+ "stagioneCorrente": "26-27",
+ "stagioni": [
+  "26-27",
+  "25-26",
+  "24-25",
+  "23-24"
+ ],
+ "coloriMister": {
+  "frab": "#4FA3FF",
+  "Pistolero": "#FF5D5D",
+  "Yara Gambirasio": "#B58CFF",
+  "simobers": "#FFD23F",
+  "gpepss": "#34D1BF",
+  "Nico Pus": "#FF8FCB"
+ },
+ "sigle": {
+  "Kefir FC": "KEF",
+  "FC OverPerformers": "OVP",
+  "OverPerformers": "OVP",
+  "Franciscum FC": "FRA",
+  "Franciscum F.C.": "FRA",
+  "Real Betlemme": "RBE",
+  "SC CortoMuso": "SCM",
+  "S.C. Corto Muso": "SCM",
+  "SPARA ROGGERDAM": "SPR",
+  "THE ROONEY": "ROO",
+  "PROVOLONI FC": "PRO",
+  "Ignoto uno": "IGN",
+  "HERTA VERNELLO": "HER",
+  "Milan e Shiro": "MES",
+  "duemilasei FC": "D06",
+  "udinegre": "UDI",
+  "duemilaotto FC": "D08"
+ },
+ "stemmi": {
+  "Kefir FC": "assets/img/stemmi/kefir.webp",
+  "FC OverPerformers": "assets/img/stemmi/overperformers.webp",
+  "Franciscum FC": "assets/img/stemmi/franciscum.webp",
+  "Real Betlemme": "assets/img/stemmi/betlemme.webp",
+  "SC CortoMuso": "assets/img/stemmi/cortomuso.webp",
+  "SPARA ROGGERDAM": "assets/img/stemmi/roggerdam.webp"
+ },
+ "documenti": {
+  "26-27": [
+   {
+    "titolo": "La lega su Leghe Fantacalcio",
+    "file": "https://leghe.fantacalcio.it/pepaj-league"
+   },
+   {
+    "titolo": "Regolamento 26/27",
+    "file": "common/stagione26_27/regolamento26_27.pdf"
+   },
+   {
+    "titolo": "Rose dopo l'asta (PDF)",
+    "file": "common/stagione26_27/rose_andata_2026_2027.pdf"
+   },
+   {
+    "titolo": "Rose dopo l'asta (Excel)",
+    "file": "common/stagione26_27/rose_andata_2026_2027_excel.xlsx"
+   }
+  ],
+  "25-26": [
+   {
+    "titolo": "Regolamento 25/26",
+    "file": "common/stagione25_26/regolamento25_26.pdf"
+   },
+   {
+    "titolo": "Export stagione completo",
+    "file": "common/stagione25_26/stagione25_26.pdf"
+   },
+   {
+    "titolo": "Tutte le partite",
+    "file": "common/stagione25_26/partite25_26.pdf"
+   },
+   {
+    "titolo": "Rose girone d'andata",
+    "file": "common/stagione25_26/rose25_26_girone_andata.pdf"
+   },
+   {
+    "titolo": "Rose girone di ritorno",
+    "file": "common/stagione25_26/rose25_26_girone_ritorno.pdf"
+   }
+  ],
+  "24-25": [
+   {
+    "titolo": "Export stagione completo",
+    "file": "common/stagione24_25/stagione24_25.pdf"
+   },
+   {
+    "titolo": "Tutte le partite",
+    "file": "common/stagione24_25/partite24_25.pdf"
+   },
+   {
+    "titolo": "Rose",
+    "file": "common/stagione24_25/rose24_25.pdf"
+   }
+  ],
+  "23-24": [
+   {
+    "titolo": "Classifica finale (immagine)",
+    "file": "common/stagione23_24/classifica23_24.jpg"
+   }
+  ]
+ },
+ "docBase": "",
+ "formazioni": [
+  "25-26"
+ ],
+ "alias": {
+  "25-26": {
+   "Milan e Shiro": "OverPerformers"
+  }
+ },
+ "fonti": {
+  "25-26": {
+   "stagionePdf": "common/stagione25_26/stagione25_26.pdf",
+   "giornate": "common/stagione25_26/giornate25_26",
+   "rose": {
+    "andata": "common/stagione25_26/rose25_26_girone_andata.pdf",
+    "ritorno": "common/stagione25_26/rose25_26_girone_ritorno.pdf"
+   }
+  },
+  "24-25": {
+   "stagionePdf": "common/stagione24_25/stagione24_25.pdf",
+   "rose": {
+    "andata": "common/stagione24_25/rose24_25.pdf"
+   }
+  }
+ },
+ "totaleGiornate": {
+  "26-27": 36
+ },
+ "locandine": [
+  "26-27-10"
+ ]
+}

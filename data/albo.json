@@ -1,0 +1,11 @@
+{
+  "25-26": {"campionato": {"squadra": "Franciscum F.C.", "mister": "Pistolero", "punti": 62},
+            "costruttori": {"squadra": "Franciscum F.C.", "mister": "Pistolero", "fantapunti": 2668},
+            "ultimo": {"squadra": "OverPerformers", "mister": "gpepss", "punti": 33}},
+  "24-25": {"campionato": {"squadra": "S.C. Corto Muso", "mister": "frab", "punti": 66},
+            "costruttori": {"squadra": "HERTA VERNELLO", "mister": "simobers", "fantapunti": 2709},
+            "ultimo": {"squadra": "duemilasei FC", "mister": "Nico Pus", "punti": 28}},
+  "23-24": {"campionato": {"squadra": "Milan e Shiro", "mister": "gpepss", "punti": 62},
+            "costruttori": {"squadra": "Real Betlemme", "mister": "Yara Gambirasio", "fantapunti": 2787},
+            "ultimo": {"squadra": "HERTA VERNELLO", "mister": "simobers", "punti": 41}}
+}
