@@ -23,7 +23,6 @@ jobs:
         run: |
           FILE_MODIFICATI=$(git diff --name-only HEAD~1 HEAD -- . ':!.github')
           if [ -n "$FILE_MODIFICATI" ]; then
-            NOVITA=$(git diff -U0 HEAD~1 HEAD -- . ':!.github' | grep '^+[^+]' | sed 's/^+//' | head -n 5)
-            MESSAGGIO=$(printf "C'è una nuova cosa sul sito!\nhttps://frab0.github.io/BocchiLeague/\n\nFile aggiornati:\n%s\n\nAnteprima aggiunte:\n%s" "$FILE_MODIFICATI" "$NOVITA")
+            MESSAGGIO=$(printf "🚨 C'è qualcosa di nuovo nel sito Bocchi League! Vai a vedere:\nhttps://frab0.github.io/BocchiLeague/")
             curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" -d "chat_id=$TELEGRAM_CHAT_ID" --data-urlencode "text=$MESSAGGIO"
           fi
