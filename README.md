@@ -14,8 +14,9 @@ Sito ufficiale della lega. È un sito statico per GitHub Pages: niente build, ni
   - `stagione-XX-YY.json`: punteggi, partite, classifiche e rose
   - `formazioni-XX-YY.json`: formazioni con voti di ogni giornata
 - `common/`: i file originali (PDF, Excel, immagini) delle stagioni
-- `tools/aggiorna.py`: rigenera i JSON dai PDF esportati dall'app
-- `.github/workflows/pubblica.yml`: l'automazione che aggiorna e pubblica il sito a ogni caricamento
+- `tools/`: gli script che aggiornano i dati (`leghe_fc.py`), creano la locandina (`locandina.py`) e rigenerano le vecchie stagioni dai PDF (`aggiorna.py`)
+- `.github/workflows/notifica-telegram.yml`: avvisa il gruppo Telegram a ogni modifica del sito
+- `comunicati.txt` e `invia_domande.txt`: i file usati dal bot Telegram
 - le vecchie pagine (`albo.html`, `comunicati.html`, `storico…html`) ora rimandano alle nuove sezioni
 
 ## Aggiungere gli stemmi
@@ -35,16 +36,14 @@ Dal 26/27 la lega gioca su Leghe Fantacalcio. I dati si leggono dal sito della l
 - `rose.json`: rose e crediti residui
 
 `python tools/leghe_fc.py` ricostruisce `data/stagione-26-27.json` (classifiche giornata per
-giornata, prossimi turni). Poi basta caricare su GitHub i file cambiati e il sito si pubblica da solo.
+giornata, prossimi turni). Poi si lancia `python tools/locandina.py` e si caricano su GitHub i file cambiati:
+GitHub Pages pubblica il sito in un paio di minuti. Non c'è nessuna automazione che lo faccia da sola:
+l'aggiornamento si fa a mano dopo ogni giornata.
 
 ## Stagioni con export PDF (FantaMaster, fino al 25/26)
 
-Le stagioni in `fonti` dentro `data/config.json` si rigenerano dai PDF con `python tools/aggiorna.py`,
-che l'automazione lancia a ogni caricamento.
-
-### Configurazione iniziale (una volta sola)
-
-In **Settings → Pages → Build and deployment → Source** scegli **GitHub Actions**.
+Le stagioni chiuse sono già nei JSON. Se servisse rigenerarle (per esempio aggiungendo il PDF di una
+giornata mancante), le stagioni in `fonti` dentro `data/config.json` si ricostruiscono con `python tools/aggiorna.py`.
 
 ### A fine stagione
 
@@ -55,4 +54,4 @@ In **Settings → Pages → Build and deployment → Source** scegli **GitHub Ac
 
 `python tools/locandina.py` crea l'immagine da condividere dell'ultima giornata
 (`assets/img/locandine/`) e aggiorna l'anteprima dei link (`assets/img/og.jpg`).
-Per una giornata precisa: `python tools/locandina.py 26-27 10`. L'automazione la rigenera da sola.
+Per una giornata precisa: `python tools/locandina.py 26-27 10`.
