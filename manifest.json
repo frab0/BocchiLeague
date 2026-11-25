@@ -1,0 +1,17 @@
+{
+  "name": "Bocchi League",
+  "short_name": "Bocchi League",
+  "description": "app ufficiale della Bocchi League",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ff2D46",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "assets/icon_app/icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}
