@@ -72,5 +72,9 @@ si aggiungono le novità e si tolgono i tormentoni che non valgono più.
    https://frab0.github.io/BocchiLeague/#gazzetta-26-27-10
    ```
 
+⚠️ **Il link va sempre nell'ultima riga del file**, da solo, senza niente dopo (nemmeno righe vuote con testo).
+La notifica dell'app usa la prima riga come titolo, le righe in mezzo come testo e l'ultima riga come link
+da aprire quando si tocca la notifica: se il link non è in fondo, finisce nel testo e la notifica apre la home.
+
 L'automazione `notifica-telegram.yml` manda il messaggio solo quando l'articolo è davvero online,
 quindi articolo e notifica si possono caricare anche insieme.
