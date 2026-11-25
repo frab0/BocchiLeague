@@ -1,7 +1,8 @@
 name: Notifica articolo Gazzetta (Telegram + App Push)
 
-# Parte quando cambia notifica_articoli.txt su pos_branch, ma manda i messaggi solo
-# quando l'articolo collegato è davvero online sul sito.
+# Parte quando cambia notifica_articoli.txt su pos_branch.
+# Se c'è un link a un articolo della Gazzetta (#gazzetta-STAGIONE-GIORNATA), aspetta che sia online.
+# Altrimenti (qualsiasi altro link o nessun link) invia subito la notifica.
 
 on:
   push:
@@ -17,7 +18,7 @@ jobs:
       - name: Scarica i file aggiornati
         uses: actions/checkout@v4
 
-      - name: Aspetta che l'articolo sia online e invia le notifiche
+      - name: Controlla e invia le notifiche
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -29,62 +30,76 @@ jobs:
             exit 0
           fi
 
-          # Dal link nel file ricava indirizzo del sito, stagione e giornata
-          # (es. https://frab0.github.io/BocchiLeague/#gazzetta-26-27-10)
-          SITO=$(grep -o 'https://[^#[:space:]]*' notifica_articoli.txt | head -1)
-          ID=$(grep -o '#gazzetta-[0-9]*-[0-9]*-[0-9]*' notifica_articoli.txt | head -1 | sed 's/#gazzetta-//')
-          LINK_COMPLETO=$(grep -o 'https://[^[:space:]]*' notifica_articoli.txt | head -1)
+          # Controlla se è presente un link specifico di un articolo della Gazzetta
+          SITO=$(grep -o 'https://[^#[:space:]]*' notifica_articoli.txt | head -1 || true)
+          ID=$(grep -o '#gazzetta-[0-9]*-[0-9]*-[0-9]*' notifica_articoli.txt | head -1 | sed 's/#gazzetta-//' || true)
 
-          if [ -z "$SITO" ] || [ -z "$ID" ]; then
-            echo "Nel file manca il link all'articolo (…/#gazzetta-STAGIONE-GIORNATA)"
-            exit 1
-          fi
-          STAGIONE=${ID%-*}
-          GIORNATA=${ID##*-}
-          echo "Aspetto che l'articolo della giornata $GIORNATA ($STAGIONE) sia online su $SITO"
+          if [ -n "$SITO" ] && [ -n "$ID" ]; then
+            STAGIONE=${ID%-*}
+            GIORNATA=${ID##*-}
+            echo "Aspetto che l'articolo della giornata $GIORNATA ($STAGIONE) sia online su $SITO"
 
-          # Controlla ogni 30 secondi, per al massimo 20 minuti
-          for i in $(seq 1 40); do
-            if curl -sf "${SITO}data/gazzetta.json?t=$(date +%s)" \
-              | jq -e --arg s "$STAGIONE" --argjson g "$GIORNATA" \
-                  'any(.[]; .stagione == $s and .giornata == $g)' > /dev/null; then
-              echo "Articolo online: invio le notifiche!"
-
-              # 1. Invio su Telegram
-              curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
-                -d "chat_id=$TELEGRAM_CHAT_ID" \
-                --data-urlencode "text@notifica_articoli.txt"
-
-              # 2. Preparazione dati e invio Notifica Push sull'App (OneSignal)
-              TITOLO=$(grep -v '^[[:space:]]*$' notifica_articoli.txt | sed -n '1p' | tr -d '\r')
-              TESTO=$(grep -v '^[[:space:]]*$' notifica_articoli.txt | sed -n '2p' | tr -d '\r')
-              # Se il file ha solo 1 riga oltre al link, usa un testo di riserva
-              if [ -z "$TESTO" ] || [[ "$TESTO" == http* ]]; then
-                TESTO="Leggi il nuovo articolo della Gazzetta!"
+            ONLINE=0
+            for i in $(seq 1 40); do
+              if curl -sf "${SITO}data/gazzetta.json?t=$(date +%s)" \
+                | jq -e --arg s "$STAGIONE" --argjson g "$GIORNATA" \
+                    'any(.[]; .stagione == $s and .giornata == $g)' > /dev/null; then
+                ONLINE=1
+                break
               fi
+              sleep 30
+            done
 
-              PAYLOAD=$(python3 -c '
-              import json, os, sys
-              data = {
-                  "app_id": os.environ["ONESIGNAL_APP_ID"],
-                  "included_segments": ["All"],
-                  "headings": {"en": sys.argv[1], "it": sys.argv[1]},
-                  "contents": {"en": sys.argv[2], "it": sys.argv[2]},
-                  "url": sys.argv[3],
-                  "priority": 10
-              }
-              print(json.dumps(data))
-              ' "$TITOLO" "$TESTO" "$LINK_COMPLETO")
-
-              curl -f -X POST https://api.onesignal.com/notifications \
-                -H "Content-Type: application/json" \
-                -H "Authorization: Key $ONESIGNAL_API_KEY" \
-                -d "$PAYLOAD"
-
-              exit 0
+            if [ "$ONLINE" -ne 1 ]; then
+              echo "Dopo 20 minuti l'articolo non è ancora online: notifica non inviata"
+              exit 1
             fi
-            sleep 30
-          done
+          fi
 
-          echo "Dopo 20 minuti l'articolo non è ancora online: notifica non inviata"
-          exit 1
+          echo "Invio le notifiche!"
+
+          # 1. Invio su Telegram (manda il testo intero così com'è nel file)
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+            -d "chat_id=$TELEGRAM_CHAT_ID" \
+            --data-urlencode "text@notifica_articoli.txt"
+
+          # 2. Preparazione dati e invio Notifica Push sull'App (OneSignal)
+          PAYLOAD=$(python3 -c '
+          import json, os
+
+          with open("notifica_articoli.txt", "r", encoding="utf-8") as f:
+              righe = [r.rstrip("\r\n") for r in f.readlines()]
+
+          # Rimuove eventuali righe vuote in cima e in fondo
+          while righe and not righe[0].strip():
+              righe.pop(0)
+          while righe and not righe[-1].strip():
+              righe.pop()
+
+          url_default = "https://frab0.github.io/BocchiLeague/"
+          url = url_default
+
+          # Se l'\''ultima riga è un link, la usa come URL della push e la toglie dal corpo del testo
+          if righe and (righe[-1].strip().startswith("http://") or righe[-1].strip().startswith("https://")):
+              url = righe.pop().strip()
+              while righe and not righe[-1].strip():
+                  righe.pop()
+
+          titolo = righe[0].strip() if righe else "Bocchi League"
+          testo = "\n".join(righe[1:]).strip() if len(righe) > 1 else "Apri l'\''app per leggere le novità!"
+
+          data = {
+              "app_id": os.environ["ONESIGNAL_APP_ID"],
+              "included_segments": ["All"],
+              "headings": {"en": titolo, "it": titolo},
+              "contents": {"en": testo, "it": testo},
+              "url": url,
+              "priority": 10
+          }
+          print(json.dumps(data))
+          ')
+
+          curl -f -X POST https://api.onesignal.com/notifications \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Key $ONESIGNAL_API_KEY" \
+            -d "$PAYLOAD"
