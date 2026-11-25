@@ -38,6 +38,10 @@
     color: #fff;
     cursor: pointer;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.2s, color 0.2s, transform 0.15s;
+  }
+  .push-bell-floating:active {
+    transform: scale(0.94);
   }
   .push-bell-floating.is-subscribed {
     border-color: #22c55e;
@@ -56,6 +60,14 @@
 
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
+  function aggiornaStatoCampanella(attivo) {
+    const btn = document.getElementById("push-bell-btn");
+    if (!btn) return;
+    btn.classList.toggle("is-subscribed", Boolean(attivo));
+    btn.title = attivo ? "Notifiche attive (clicca per disattivare)" : "Attiva notifiche";
+    btn.setAttribute("aria-label", btn.title);
+  }
+
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
     try {
@@ -65,10 +77,10 @@
         serviceWorkerPath: "/BocchiLeague/OneSignalSDKWorker.js",
       });
 
-      const btn = document.getElementById("push-bell-btn");
-      if (btn && OneSignal.User.PushSubscription.optedIn) {
-        btn.classList.add("is-subscribed");
-      }
+      aggiornaStatoCampanella(OneSignal.User.PushSubscription.optedIn);
+      OneSignal.User.PushSubscription.addEventListener("change", (event) => {
+        aggiornaStatoCampanella(event.current.optedIn);
+      });
     } catch (err) {
       console.error("Errore init OneSignal:", err);
     }
@@ -76,21 +88,18 @@
 
   function attivaNotificheBocchi() {
     window.OneSignalDeferred.push(async function(OneSignal) {
-      try {
-        await OneSignal.Notifications.requestPermission();
-        const attivo = OneSignal.User.PushSubscription.optedIn;
-        const subId = OneSignal.User.PushSubscription.id;
-        const token = OneSignal.User.PushSubscription.token;
-        const btn = document.getElementById("push-bell-btn");
-        if (attivo && btn) btn.classList.add("is-subscribed");
-        alert(
-          "Attivo: " + attivo +
-          "\nID: " + (subId || "vuoto") +
-          "\nToken: " + (token ? "OK" : "mancante")
-        );
-      } catch (e) {
-        alert("Errore: " + e.message);
+      if (OneSignal.User.PushSubscription.optedIn) {
+        await OneSignal.User.PushSubscription.optOut();
+        aggiornaStatoCampanella(false);
+        return;
       }
+
+      if (Notification.permission === "granted") {
+        await OneSignal.User.PushSubscription.optIn();
+      } else {
+        await OneSignal.Notifications.requestPermission();
+      }
+      aggiornaStatoCampanella(OneSignal.User.PushSubscription.optedIn);
     });
   }
 </script>
