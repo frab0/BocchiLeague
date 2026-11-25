@@ -15,8 +15,9 @@ Sito ufficiale della lega. È un sito statico per GitHub Pages: niente build, ni
   - `formazioni-XX-YY.json`: formazioni con voti di ogni giornata
 - `common/`: i file originali (PDF, Excel, immagini) delle stagioni
 - `tools/`: gli script che aggiornano i dati (`leghe_fc.py`), creano la locandina (`locandina.py`) e rigenerano le vecchie stagioni dai PDF (`aggiorna.py`)
-- `.github/workflows/notifica-telegram.yml`: avvisa il gruppo Telegram a ogni modifica del sito
-- `comunicati.txt` e `invia_domande.txt`: i file usati dal bot Telegram
+- `tools/gazzetta/`: la guida per scrivere la Gazzetta (`GUIDA.md`) e il registro dei tormentoni
+- `.github/workflows/notifica-telegram.yml`: quando cambia `notifica_articoli.txt`, aspetta che l'articolo sia online e manda il messaggio sul gruppo Telegram
+- `invia_domande.txt`, `risposte_mister.txt`, `notifica_articoli.txt`: i file usati dai bot Telegram
 - le vecchie pagine (`albo.html`, `comunicati.html`, `storico…html`) ora rimandano alle nuove sezioni
 
 ## Aggiungere gli stemmi

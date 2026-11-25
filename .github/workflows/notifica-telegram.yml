@@ -1,4 +1,7 @@
-name: Notifica aggiornamento sito su Telegram
+name: Notifica articolo Gazzetta su Telegram
+
+# Parte quando cambia notifica_articoli.txt, ma manda il messaggio solo
+# quando l'articolo collegato è davvero online sul sito.
 
 on:
   push:
@@ -14,13 +17,41 @@ jobs:
       - name: Scarica i file aggiornati
         uses: actions/checkout@v4
 
-      - name: Invia il contenuto di notifica_articoli.txt su Telegram
+      - name: Aspetta che l'articolo sia online e invia la notifica
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          if [ -f notifica_articoli.txt ] && [ -n "$(tr -d '[:space:]' < notifica_articoli.txt)" ]; then
-            curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
-              -d "chat_id=$TELEGRAM_CHAT_ID" \
-              --data-urlencode "text@notifica_articoli.txt"
+          if [ ! -f notifica_articoli.txt ] || [ -z "$(tr -d '[:space:]' < notifica_articoli.txt)" ]; then
+            echo "notifica_articoli.txt è vuoto: niente da inviare"
+            exit 0
           fi
+
+          # Dal link nel file ricava indirizzo del sito, stagione e giornata
+          # (es. https://frab0.github.io/BocchiLeague/#gazzetta-26-27-10)
+          SITO=$(grep -o 'https://[^#[:space:]]*' notifica_articoli.txt | head -1)
+          ID=$(grep -o '#gazzetta-[0-9]*-[0-9]*-[0-9]*' notifica_articoli.txt | head -1 | sed 's/#gazzetta-//')
+          if [ -z "$SITO" ] || [ -z "$ID" ]; then
+            echo "Nel file manca il link all'articolo (…/#gazzetta-STAGIONE-GIORNATA)"
+            exit 1
+          fi
+          STAGIONE=${ID%-*}
+          GIORNATA=${ID##*-}
+          echo "Aspetto che l'articolo della giornata $GIORNATA ($STAGIONE) sia online su $SITO"
+
+          # Controlla ogni 30 secondi, per al massimo 20 minuti
+          for i in $(seq 1 40); do
+            if curl -sf "${SITO}data/gazzetta.json?t=$(date +%s)" \
+              | jq -e --arg s "$STAGIONE" --argjson g "$GIORNATA" \
+                  'any(.[]; .stagione == $s and .giornata == $g)' > /dev/null; then
+              echo "Articolo online: invio la notifica"
+              curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+                -d "chat_id=$TELEGRAM_CHAT_ID" \
+                --data-urlencode "text@notifica_articoli.txt"
+              exit 0
+            fi
+            sleep 30
+          done
+
+          echo "Dopo 20 minuti l'articolo non è ancora online: notifica non inviata"
+          exit 1

@@ -2,7 +2,7 @@
 /* ===== Bocchi League: sito a pagina unica che legge i dati da /data ===== */
 const $app = document.getElementById('app');
 const cache = {};
-const load = n => cache[n] ||= fetch(`data/${n}.json`).then(r => { if (!r.ok) throw new Error(n); return r.json(); });
+const load = n => cache[n] ||= fetch(`data/${n}.json`, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(n); return r.json(); });
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const lbl = s => s.replace('-', '/');
 const fp = x => x == null ? '–' : Number(x).toLocaleString('it-IT', { minimumFractionDigits: x % 1 ? 1 : 0, maximumFractionDigits: 1 });

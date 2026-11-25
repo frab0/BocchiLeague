@@ -4,34 +4,49 @@
   "giornata": 10,
   "data": "2026-11-24",
   "titolo": "Sette colpi di Kefir, Roggerdam torna in vetta",
-  "sommario": "Nico Pus firma il miglior punteggio della stagione e lascia l'ultimo posto. Simobers approfitta del crollo di OverPerformers e si riprende la testa. Tra Betlemme e CortoMuso finisce 6-6: la partita con più gol dell'anno.",
+  "sommario": "Nico Pus firma il record stagionale e lascia l'ultimo posto a chi se lo merita di più. Simobers ringrazia il crollo di OverPerformers e torna in testa. Tra Betlemme e CortoMuso finisce 6-6.",
   "pezzi": [
    {
     "partita": 0,
     "titolo": "Kefir, la notte dei 92,5",
     "testo": [
-     "Fino a tre settimane fa il Kefir era ultimo con quattro sconfitte di fila. Due vittorie dopo, Nico Pus è quinto e ha in mano il record di giornata della stagione: 92,5 fantapunti, sette gol sul tabellone.",
-     "Per gpepss è il secondo stop nelle ultime quattro, e costa caro: la vetta."
+     "Tre settimane fa il Kefir era ultimo. Due vittorie dopo, Nico Pus è quinto e ha in mano il record stagionale: 92,5 fantapunti, sette gol.",
+     "Sette. Tanti ne ha presi gpepss, arrivato da capolista e ripartito senza vetta. In società è partita la caccia al colpevole. Basta uno specchio."
     ],
-    "dichiarazioni": []
+    "dichiarazioni": [
+     {
+      "mister": "gpepss",
+      "testo": "Sette gol? Episodi. La vetta torna da noi già la prossima settimana."
+     }
+    ]
    },
    {
     "partita": 1,
     "titolo": "Roggerdam, otto partite senza perdere",
     "testo": [
-     "Dopo le due sconfitte iniziali, simobers non ha più perso: sei vittorie e due pareggi. Il 4-1 su Franciscum vale il sorpasso, 20 punti contro 19.",
-     "Per Pistolero è la terza sconfitta consecutiva: il campione in carica è quarto, a nove punti dalla vetta."
+     "Dopo due sconfitte iniziali simobers non ha più perso: sei vittorie e due pareggi. Il 4-1 su Franciscum vale il sorpasso, 20 a 19.",
+     "Per Pistolero terza sconfitta di fila, peggior punteggio di giornata e quarto posto a nove punti dalla vetta. Più che difendere lo scudetto, sembra volerlo restituire."
     ],
-    "dichiarazioni": []
+    "dichiarazioni": [
+     {
+      "mister": "Pistolero",
+      "testo": "Lo scudetto non lo regalo a nessuno. È solo un momento."
+     }
+    ]
    },
    {
     "partita": 2,
     "titolo": "Dodici gol e nessun vincitore",
     "testo": [
-     "87 contro 88,5: due dei quattro punteggi più alti della stagione, nella stessa partita.",
-     "Il pareggio interrompe quattro sconfitte di fila del Betlemme ma non basta: a pari punti con il Kefir, la differenza di fantapunti lo manda ultimo. frab resta terzo, a cinque punti dalla vetta."
+     "87 contro 88,5: due dei quattro punteggi più alti della stagione nella stessa partita.",
+     "Il Betlemme ferma quattro sconfitte di fila e festeggia un pareggio che lo lascia ultimo. Fare 87 e restare in fondo è un talento raro. frab resta terzo, a cinque punti dalla vetta."
     ],
-    "dichiarazioni": []
+    "dichiarazioni": [
+     {
+      "mister": "frab",
+      "testo": "Fai 88,5 e non vinci: il fantacalcio a volte è una barzelletta."
+     }
+    ]
    }
   ],
   "top": {
@@ -42,11 +57,11 @@
   "flop": {
    "squadra": "Franciscum FC",
    "valore": 69,
-   "nota": "Terza sconfitta di fila"
+   "nota": "Terza di fila. Campione in carica, ancora per poco"
   },
   "chiusura": {
    "titolo": "Nel prossimo numero · G11",
-   "testo": "Kefir contro Franciscum, OverPerformers contro CortoMuso per riprendersi la vetta, e Betlemme contro una Roggerdam che non perde da otto turni."
+   "testo": "Kefir contro Franciscum, OverPerformers contro CortoMuso per riprendersi la vetta, e Betlemme contro una Roggerdam che non perde da otto turni. Per qualcuno, l'ultima occasione per non sparire."
   }
  }
 ]
