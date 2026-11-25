@@ -70,7 +70,8 @@ jobs:
                   "included_segments": ["All"],
                   "headings": {"en": sys.argv[1], "it": sys.argv[1]},
                   "contents": {"en": sys.argv[2], "it": sys.argv[2]},
-                  "url": sys.argv[3]
+                  "url": sys.argv[3],
+                  "priority": 10
               }
               print(json.dumps(data))
               ' "$TITOLO" "$TESTO" "$LINK_COMPLETO")
