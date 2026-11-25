@@ -4,25 +4,23 @@ on:
   push:
     branches:
       - pos_branch
-    paths-ignore:
-      - '.github/**'
+    paths:
+      - 'comunicati.txt'
 
 jobs:
   controlla-e-notifica:
     runs-on: ubuntu-latest
     steps:
-      - name: Scarica storico modifiche
+      - name: Scarica i file aggiornati
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
 
-      - name: Confronta versioni e invia notifica
+      - name: Invia il contenuto di comunicati.txt su Telegram
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          FILE_MODIFICATI=$(git diff --name-only HEAD~1 HEAD -- . ':!.github')
-          if [ -n "$FILE_MODIFICATI" ]; then
-            MESSAGGIO=$(printf "🚨 C'è qualcosa di nuovo nel sito Bocchi League! Vai a vedere:\nhttps://frab0.github.io/BocchiLeague/")
-            curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" -d "chat_id=$TELEGRAM_CHAT_ID" --data-urlencode "text=$MESSAGGIO"
+          if [ -f comunicati.txt ] && [ -n "$(tr -d '[:space:]' < comunicati.txt)" ]; then
+            curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+              -d "chat_id=$TELEGRAM_CHAT_ID" \
+              --data-urlencode "text@comunicati.txt"
           fi
