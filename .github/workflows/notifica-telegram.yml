@@ -5,7 +5,7 @@ on:
     branches:
       - pos_branch
     paths:
-      - 'comunicati.txt'
+      - 'notifica_articoli.txt'
 
 jobs:
   controlla-e-notifica:
@@ -14,13 +14,13 @@ jobs:
       - name: Scarica i file aggiornati
         uses: actions/checkout@v4
 
-      - name: Invia il contenuto di comunicati.txt su Telegram
+      - name: Invia il contenuto di notifica_articoli.txt su Telegram
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          if [ -f comunicati.txt ] && [ -n "$(tr -d '[:space:]' < comunicati.txt)" ]; then
+          if [ -f notifica_articoli.txt ] && [ -n "$(tr -d '[:space:]' < notifica_articoli.txt)" ]; then
             curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
               -d "chat_id=$TELEGRAM_CHAT_ID" \
-              --data-urlencode "text@comunicati.txt"
+              --data-urlencode "text@notifica_articoli.txt"
           fi
