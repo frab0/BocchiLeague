@@ -26,7 +26,7 @@
     top: calc(12px + env(safe-area-inset-top));
     right: 14px;
     z-index: 9999;
-    display: inline-flex;
+    display: none;
     align-items: center;
     justify-content: center;
     width: 40px;
@@ -39,6 +39,9 @@
     cursor: pointer;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
     transition: border-color 0.2s, color 0.2s, transform 0.15s;
+  }
+  .push-bell-floating.is-visible {
+    display: inline-flex;
   }
   .push-bell-floating:active {
     transform: scale(0.94);
@@ -67,6 +70,16 @@
     btn.title = attivo ? "Notifiche attive (clicca per disattivare)" : "Attiva notifiche";
     btn.setAttribute("aria-label", btn.title);
   }
+
+  function aggiornaVisibilitaCampanella() {
+    const btn = document.getElementById("push-bell-btn");
+    if (!btn) return;
+    const isAltro = location.hash === "#altro";
+    btn.classList.toggle("is-visible", isAltro);
+  }
+
+  window.addEventListener("hashchange", aggiornaVisibilitaCampanella);
+  window.addEventListener("DOMContentLoaded", aggiornaVisibilitaCampanella);
 
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
