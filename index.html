@@ -20,22 +20,14 @@
 
 <link rel="manifest" href="manifest.json">
 
-<style>
-  /* Posiziona la campanellina di OneSignal in alto a sinistra, sotto la topbar */
-  #onesignal-bell-container.onesignal-reset {
-    top: 72px !important;
-    bottom: auto !important;
-    left: 16px !important;
-    right: auto !important;
-  }
-</style>
-
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
       appId: "abef08f6-0e2b-4f36-b6c3-41dd0a76720e",
+      serviceWorkerParam: { scope: "/BocchiLeague/" },
+      serviceWorkerPath: "/BocchiLeague/OneSignalSDKWorker.js",
     });
   });
 </script>
