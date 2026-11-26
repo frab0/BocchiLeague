@@ -22,7 +22,7 @@ andare sul file .yml e togliere le robe con #
 - `tools/gazzetta/`: la guida per scrivere la Gazzetta (`GUIDA.md`) e il registro dei tormentoni
 - `.github/workflows/notifica-telegram.yml`: quando cambia `notifica_articoli.txt`, aspetta che l'articolo sia online e manda il messaggio sul gruppo Telegram
 - `invia_domande.txt`, `risposte_mister.txt`, `notifica_articoli.txt`: i file usati dai bot Telegram
-- le vecchie pagine (`albo.html`, `comunicati.html`, `storico…html`) ora rimandano alle nuove sezioni
+- `404.html`: la pagina "non trovata"; porta anche i vecchi indirizzi (`albo.html`, `comunicati.html`, `storico…html`) alle nuove sezioni
 
 ## Aggiungere gli stemmi
 
