@@ -21,8 +21,9 @@ Un mister ti scrive una domanda su Telegram: rispondi usando SOLO i dati del DOS
 COSA C'È NEL DOSSIER
 - Stagione in corso: classifica, ultima e prossima giornata, forma di ogni squadra, rose con costi.
 - Storico: albo d'oro, piazzamenti, record, testa a testa tra mister (dal 24-25).
-- Giocatori: per il 25-26 ci sono le formazioni giornata per giornata (titolare, entrato dalla
-  panchina, voti e fantavoti); per il 26-27 solo rosa, ruolo, costo e quotazione.
+- Giocatori: per il 25-26 e per il 26-27 ci sono le formazioni giornata per giornata (titolare,
+  entrato dalla panchina, voti e fantavoti); per il 26-27 anche gol, assist, cartellini, rigori e
+  gol subiti dei portieri. Per il 26-27 ci sono anche rosa, ruolo, costo e quotazione.
 - Le squadre cambiano nome da una stagione all'altra: conta il mister, indicato tra parentesi.
 
 COME RISPONDERE
@@ -30,7 +31,7 @@ COME RISPONDERE
 - Al massimo 3 frasi, su una sola riga. Niente elenchi, niente virgolette doppie, niente markdown.
 - Numeri, nomi e stagioni esattamente come nel dossier. Non fare stime e non inventare.
 - Se la domanda è ambigua, scegli l'interpretazione più probabile e dillo in poche parole.
-- Se il dato non c'è (per esempio le formazioni del 26-27), dillo chiaramente.
+- Se il dato non c'è (per esempio una giornata non ancora giocata), dillo chiaramente.
 - Se la domanda non riguarda la lega, rispondi che l'archivio parla solo della Bocchi League.
 
 STILE
@@ -187,7 +188,8 @@ class Lega:
                     for x in lista:
                         k = (s, t, x["nome"])
                         c = schede.setdefault(k, {"r": x["r"], "conv": 0, "tit_voto": 0, "tit_sv": 0, "entrato": 0,
-                                                   "panca_voto": 0, "panca_fv": 0.0, "v": [], "fv": [], "best": None})
+                                                   "panca_voto": 0, "panca_fv": 0.0, "v": [], "fv": [], "best": None,
+                                                   "ev": {}})
                         c["conv"] += 1
                         if x["tit"] and x["ok"]:
                             c["tit_voto"] += 1
@@ -198,6 +200,9 @@ class Lega:
                         elif x["v"] is not None:
                             c["panca_voto"] += 1
                             c["panca_fv"] += x["fv"] or 0
+                        if x["v"] is not None:
+                            for e in x.get("ev", []):
+                                c["ev"][e] = c["ev"].get(e, 0) + 1
                         if x["ok"] and x["v"] is not None:
                             c["v"].append(x["v"]); c["fv"].append(x["fv"])
                             if c["best"] is None or x["fv"] > c["best"][0]:
@@ -213,14 +218,24 @@ class Lega:
         return (f"- {nome} ({c['r']}), {s}, {t} ({self.nome(self.mister_di(s, t))}): in distinta {c['conv']} giornate; "
                 f"titolare con voto {c['tit_voto']}, titolare senza voto {c['tit_sv']}, entrato dalla panchina {c['entrato']}, "
                 f"rimasto in panchina pur avendo preso voto {c['panca_voto']} volte ({c['panca_fv']:.1f} fantapunti non usati); "
-                f"partite valide {pres}, {medie}")
+                f"partite valide {pres}, {medie}" + self.eventi_txt(c["ev"]))
+
+    EVENTI = [("g", "gol su azione"), ("r", "rigori segnati"), ("a", "assist"), ("as", "assist da fermo"),
+              ("ag", "assist gol"), ("y", "ammonizioni"), ("x", "espulsioni"), ("o", "autogol"),
+              ("rs", "rigori sbagliati"), ("rp", "rigori parati"), ("s", "gol subiti"), ("i", "partite da imbattuto")]
+
+    def eventi_txt(self, ev):
+        parti = [f"{ev[k]} {txt}" for k, txt in self.EVENTI if ev.get(k)]
+        return ("; nelle giornate in cui ha preso voto (anche da panchinaro): " + ", ".join(parti)) if parti else ""
 
     def migliori(self):
         out = []
         for s in self.form:
-            cand = [(sum(c["fv"]) / len(c["fv"]), k) for k, c in self.schede.items() if k[0] == s and len(c["fv"]) >= 15]
+            n_g = len(self.form[s])
+            soglia = min(15, max(3, round(n_g * 0.4)))
+            cand = [(sum(c["fv"]) / len(c["fv"]), k) for k, c in self.schede.items() if k[0] == s and len(c["fv"]) >= soglia]
             cand.sort(reverse=True)
-            out.append(f"MIGLIORI FANTAMEDIE {s} (almeno 15 partite valide): " + "; ".join(
+            out.append(f"MIGLIORI FANTAMEDIE {s} (almeno {soglia} partite valide): " + "; ".join(
                 f"{k[2]} {fm:.2f} ({k[1]}, {self.nome(self.mister_di(s, k[1]))})" for fm, k in cand[:5]))
             panca = sorted(((c["panca_fv"], k) for k, c in self.schede.items() if k[0] == s), reverse=True)[:3]
             out.append(f"PANCHINA MALEDETTA {s} (fantapunti presi da giocatori lasciati in panchina): " + "; ".join(
@@ -228,13 +243,21 @@ class Lega:
             for m in self.mis["mister"]:
                 t = self.t_of[s].get(m)
                 c2 = sorted(((sum(c["fv"]) / len(c["fv"]), k) for k, c in self.schede.items()
-                             if k[0] == s and k[1] == t and len(c["fv"]) >= 10), reverse=True)[:3]
+                             if k[0] == s and k[1] == t and len(c["fv"]) >= min(10, soglia)), reverse=True)[:3]
                 if c2:
                     out.append(f"- migliori di {self.nome(m)} nel {s}: " + ", ".join(f"{k[2]} {fm:.2f}" for fm, k in c2))
                 pc = sorted(((c["panca_fv"], k) for k, c in self.schede.items() if k[0] == s and k[1] == t and c["panca_voto"]), reverse=True)[:3]
                 if pc:
                     out.append(f"- panchina di {self.nome(m)} nel {s} (fantapunti presi senza entrare): " + ", ".join(
                         f"{k[2]} {v:.1f} in {self.schede[k]['panca_voto']} giornate" for v, k in pc))
+            gol = sorted(((c["ev"].get("g", 0) + c["ev"].get("r", 0), k) for k, c in self.schede.items() if k[0] == s), reverse=True)
+            if gol and gol[0][0]:
+                out.append(f"BOMBER {s} (gol nelle giornate in rosa, rigori compresi): " + "; ".join(
+                    f"{k[2]} {n} ({k[1]}, {self.nome(self.mister_di(s, k[1]))})" for n, k in gol[:6] if n))
+                ass = sorted(((sum(c["ev"].get(e, 0) for e in ("a", "as", "ag")), k) for k, c in self.schede.items() if k[0] == s), reverse=True)
+                out.append(f"ASSISTMEN {s}: " + "; ".join(f"{k[2]} {n} ({k[1]})" for n, k in ass[:5] if n))
+                cart = sorted(((c["ev"].get("y", 0) + 2 * c["ev"].get("x", 0), k) for k, c in self.schede.items() if k[0] == s), reverse=True)
+                out.append(f"CATTIVI {s} (ammonizioni, espulsioni contano doppio): " + "; ".join(f"{k[2]} {n} ({k[1]})" for n, k in cart[:4] if n))
         cur = self.S[self.corrente].get("rose") or {}
         tutti = [(x.get("costo") or 0, x["nome"], t) for fase in cur.values() for t, L in fase.items() for x in L]
         tutti.sort(reverse=True)
