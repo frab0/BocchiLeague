@@ -2,6 +2,9 @@
 
 Sito ufficiale della lega. È un sito statico per GitHub Pages: niente build, niente server.
 
+## FORMATO INVIA DOMANDE
+codicetelegram - frab (SC CortoMuso): testo
+
 ## PER ATTIVARE LE NOTIFICHE VIA TELEGRAM PER notifica_articoli
 andare sul file .yml e togliere le robe con #
 
