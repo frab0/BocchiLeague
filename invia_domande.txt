@@ -1,3 +1,0 @@
-frab (SC CortoMuso): "Come commenti il risultato di questa giornata?"
-Nico Pus (Kefir FC): "Chi sarà il prossimo capitano?"
-CONFERMA: "✅ Dichiarazione acquisita per {mister}! La troverai sulla Gazzetta."
