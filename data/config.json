@@ -135,5 +135,6 @@
  },
  "locandine": [
   "26-27-10"
- ]
+ ],
+  "telegram": {"wiki": "wiki_stats_bot", "stampa": "sala_stampa_bl_bot"}
 }

@@ -448,7 +448,7 @@ V.gazzetta = async (sid, n) => {
     const a = gaz.find(x => x.stagione === sid && x.giornata === +n);
     if (a) return articolo(a);
   }
-  return `<div class="view"><div class="head"><h2>La Gazzetta Bocchi League</h2><p>Il racconto di ogni giornata: risultati, sorpassi, record e le parole dei Mister.</p></div>
+  return `<div class="view"><div class="head"><h2>La Gazzetta Bocchi League</h2><p>Il racconto di ogni giornata: risultati, sorpassi, record e le parole dei Mister.</p></div>${botLega()}
     <div style="display:grid;gap:8px;max-width:760px">${gaz.map(a => `<a class="issue" href="#gazzetta-${a.stagione}-${a.giornata}"><span class="n">${a.giornata}</span><span><small>Giornata ${a.giornata} · ${lbl(a.stagione)} · ${data(a.data)}</small><h3>${esc(a.titolo)}</h3></span></a>`).join('')}</div></div>`;
 };
 function articolo(a) {
@@ -492,6 +492,8 @@ const ICO = {
   rose: '<path d="M8 4h8l4 3-2 4h-2v9H8v-9H6L4 7z"/>',
   archivio: '<path d="M4 5h16v4H4zM5 9h14v11H5zM10 13h4"/>'
 };
+const tgBtn = (k, t) => CFG.telegram?.[k] ? `<a class="btn tgb" href="https://t.me/${encodeURIComponent(CFG.telegram[k])}" target="_blank" rel="noopener">${t}</a>` : '';
+const botLega = () => (CFG.telegram?.wiki || CFG.telegram?.stampa) ? `<div class="tg-row">${tgBtn('stampa', '🎙️ Sala Stampa')}${tgBtn('wiki', '📚 Chiedi alla Wiki')}</div>` : '';
 const voce = (h, k, t, d) => `<a class="link" href="#${h}"><span class="lt"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg></span><span>${t}<small>${d}</small></span></span></a>`;
 V.altro = async () => `<div class="view"><div class="head"><h2>Tutta la lega</h2></div><div class="links">
   ${voce('gazzetta', 'gazzetta', 'La Gazzetta Bocchi League', 'Il racconto di ogni giornata')}
@@ -501,7 +503,7 @@ V.altro = async () => `<div class="view"><div class="head"><h2>Tutta la lega</h2
   ${voce('regolamento', 'regolamento', `Regolamento ${lbl(CFG.stagioneCorrente)}`, 'Da scaricare in PDF')}
   ${voce('rose', 'rose', 'Rose', "Squadre e crediti spesi all'asta")}
   ${voce('archivio', 'archivio', 'Archivio stagioni', `File originali dal ${CFG.fondazione}`)}
-</div></div>`;
+</div>${botLega()}</div>`;
 
 /* ---------- router ---------- */
 const TAB = { home: 'home', classifica: 'classifica', giornate: 'giornate', gazzetta: 'gazzetta', mister: 'mister', albo: 'albo', bollettino: 'bollettino' };

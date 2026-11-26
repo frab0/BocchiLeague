@@ -1,0 +1,56 @@
+name: Wiki della Lega (risponde alle domande)
+
+# Parte quando il bot salva una domanda in domande_ricevute.txt.
+# Lo script calcola i dati dalla cartella data/, chiede la risposta a un modello gratuito
+# di GitHub Models e la scrive in invia_risposte.txt, che il bot manda al mister.
+
+on:
+  push:
+    branches:
+      - pos_branch
+    paths:
+      - 'domande_ricevute.txt'
+
+# Una domanda alla volta: se ne arriva un'altra mentre si risponde, aspetta il suo turno
+concurrency:
+  group: wiki-della-lega
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # per salvare invia_risposte.txt
+  models: read      # per usare i modelli gratuiti di GitHub
+
+jobs:
+  rispondi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scarica i file aggiornati
+        uses: actions/checkout@v4
+
+      - name: Cerca la risposta
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "$(tr -d '[:space:]' < domande_ricevute.txt)" ]; then
+            echo "Nessuna domanda in attesa"
+            exit 0
+          fi
+          python3 tools/chiedi/chiedi.py .
+
+      - name: Salva la risposta
+        run: |
+          if git diff --quiet -- invia_risposte.txt; then
+            echo "Niente da salvare"
+            exit 0
+          fi
+          git config user.name "Wiki della Lega"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add invia_risposte.txt
+          git commit -m "Risposta della Wiki della Lega"
+          # se nel frattempo il bot ha salvato qualcosa, si riallinea e riprova
+          for i in 1 2 3 4 5; do
+            git pull --rebase -q origin pos_branch && git push -q origin HEAD:pos_branch && exit 0
+            sleep 3
+          done
+          echo "Non sono riuscito a salvare la risposta"
+          exit 1
