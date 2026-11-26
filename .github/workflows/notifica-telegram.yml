@@ -1,4 +1,4 @@
-name: Notifica articolo Gazzetta (Telegram + App Push)
+name: Notifica articolo Gazzetta (App Push + Telegram in pausa)
 
 # Parte quando cambia notifica_articoli.txt su pos_branch.
 # Se c'è un link a un articolo della Gazzetta (#gazzetta-STAGIONE-GIORNATA), aspetta che sia online.
@@ -20,6 +20,7 @@ jobs:
 
       - name: Controlla e invia le notifiche
         env:
+          # Le variabili Telegram restano qui pronte (non inviano nulla finché il blocco sotto è commentato)
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           ONESIGNAL_APP_ID: ${{ secrets.ONESIGNAL_APP_ID }}
@@ -58,12 +59,16 @@ jobs:
 
           echo "Invio le notifiche!"
 
-          # 1. Invio su Telegram (manda il testo intero così com'è nel file)
-          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
-            -d "chat_id=$TELEGRAM_CHAT_ID" \
-            --data-urlencode "text@notifica_articoli.txt"
+          # =========================================================================
+          # ⏸️ TELEGRAM IN PAUSA (NOTIFICHE DISATTIVATE)
+          # Per riattivare Telegram, TOGLI IL "#" SOLO ALLE 3 RIGHE QUI SOTTO:
+          # =========================================================================
+          # curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+          #   -d "chat_id=$TELEGRAM_CHAT_ID" \
+          #   --data-urlencode "text@notifica_articoli.txt"
+          # =========================================================================
 
-          # 2. Preparazione dati e invio Notifica Push sull'App (OneSignal)
+          # Invio Notifica Push sull'App (OneSignal)
           PAYLOAD=$(python3 -c '
           import json, os
 
