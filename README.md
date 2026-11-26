@@ -2,6 +2,10 @@
 
 Sito ufficiale della lega. È un sito statico per GitHub Pages: niente build, niente server.
 
+## PER ATTIVARE LE NOTIFICHE VIA TELEGRAM PER notifica_articoli
+andare sul file .yml e togliere le robe con #
+
+
 ## Struttura
 
 - `index.html`: l'unica pagina; le sezioni si aprono con l'indirizzo dopo `#` (`#classifica`, `#giornate-25-26-38`, `#mister-frab`…)
