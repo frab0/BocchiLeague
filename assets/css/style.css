@@ -262,5 +262,7 @@ main{display:block;max-width:1080px;margin:0 auto;padding:0 max(4vw,16px) 40px;o
 .poster-act{display:flex;gap:10px;flex-wrap:wrap}
 
 /* Bot Telegram della Lega */
-.tg-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tg-row{display:flex;flex-wrap:nowrap;gap:8px;margin-top:12px}
+.tg-row .btn{flex:1 1 0;min-width:0;padding:10px 8px;text-align:center;line-height:1.2}
+@media(max-width:370px){.tg-row .btn{font-size:13px;padding:10px 4px;gap:5px}}
 .btn.tgb{border-color:rgba(42,171,238,.5);color:#fff;background:rgba(42,171,238,.14)}
