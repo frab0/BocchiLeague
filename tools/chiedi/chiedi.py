@@ -224,8 +224,12 @@ class Lega:
               ("ag", "assist gol"), ("y", "ammonizioni"), ("x", "espulsioni"), ("o", "autogol"),
               ("rs", "rigori sbagliati"), ("rp", "rigori parati"), ("s", "gol subiti"), ("i", "partite da imbattuto")]
 
+    SING = {"g": "gol su azione", "r": "rigore segnato", "a": "assist", "as": "assist da fermo", "ag": "assist gol",
+            "y": "ammonizione", "x": "espulsione", "o": "autogol", "rs": "rigore sbagliato", "rp": "rigore parato",
+            "s": "gol subito", "i": "partita da imbattuto"}
+
     def eventi_txt(self, ev):
-        parti = [f"{ev[k]} {txt}" for k, txt in self.EVENTI if ev.get(k)]
+        parti = [f"{ev[k]} {txt if ev[k] > 1 else self.SING.get(k, txt)}" for k, txt in self.EVENTI if ev.get(k)]
         return ("; nelle giornate in cui ha preso voto (anche da panchinaro): " + ", ".join(parti)) if parti else ""
 
     def migliori(self):
@@ -273,6 +277,13 @@ class Lega:
         return (f"ROSA {self.corrente} di {t} ({self.nome(m)}): " +
                 ", ".join(f"{x['nome']} {x['r']} {x.get('costo')}cr" for x in rose[fase][t]))
 
+    @staticmethod
+    def nominato(nome, q):
+        """Vero se la domanda cita il giocatore, anche solo per cognome (Pellegrino M. -> pellegrino)."""
+        n = norm(nome)
+        cognome = " ".join(w for w in n.split() if len(w) > 2)
+        return any(len(c) >= 4 and (" " + c + " ") in q for c in {n, cognome})
+
     def giocatori(self, domanda):
         q = " " + norm(domanda) + " "
         trovati = []
@@ -280,13 +291,11 @@ class Lega:
             for fase, rose in (self.S[s].get("rose") or {}).items():
                 for t, lista in rose.items():
                     for x in lista:
-                        n = norm(x["nome"])
-                        if len(n) >= 4 and (" " + n + " ") in q:
+                        if self.nominato(x["nome"], q):
                             q_ = f", quotazione {x['quot']}" if x.get("quot") else ""
                             trovati.append(f"- {x['nome']} ({x['r']}): rosa {s} {fase}, {t} ({self.nome(self.mister_di(s, t))}), costo {x.get('costo')}{q_}")
         for k in self.schede:
-            n = norm(k[2])
-            if len(n) >= 4 and (" " + n + " ") in q:
+            if self.nominato(k[2], q):
                 trovati.append(self.scheda_txt(k))
         return ("GIOCATORI NOMINATI:\n" + "\n".join(dict.fromkeys(trovati))) if trovati else None
 
