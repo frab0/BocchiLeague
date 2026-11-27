@@ -34,17 +34,20 @@ jobs:
           # Controlla se è presente un link specifico di un articolo della Gazzetta
           SITO=$(grep -o 'https://[^#[:space:]]*' notifica_articoli.txt | head -1 || true)
           ID=$(grep -o '#gazzetta-[0-9]*-[0-9]*-[0-9]*' notifica_articoli.txt | head -1 | sed 's/#gazzetta-//' || true)
+          # I pronostici hanno il link che finisce con -pronostici, gli articoli del dopo-partita no
+          TIPO=cronaca
+          if grep -q '#gazzetta-[0-9]*-[0-9]*-[0-9]*-pronostici' notifica_articoli.txt; then TIPO=pronostici; fi
 
           if [ -n "$SITO" ] && [ -n "$ID" ]; then
             STAGIONE=${ID%-*}
             GIORNATA=${ID##*-}
-            echo "Aspetto che l'articolo della giornata $GIORNATA ($STAGIONE) sia online su $SITO"
+            echo "Aspetto che l'articolo ($TIPO) della giornata $GIORNATA ($STAGIONE) sia online su $SITO"
 
             ONLINE=0
             for i in $(seq 1 40); do
               if curl -sf "${SITO}data/gazzetta.json?t=$(date +%s)" \
-                | jq -e --arg s "$STAGIONE" --argjson g "$GIORNATA" \
-                    'any(.[]; .stagione == $s and .giornata == $g)' > /dev/null; then
+                | jq -e --arg s "$STAGIONE" --argjson g "$GIORNATA" --arg t "$TIPO" \
+                    'any(.[]; .stagione == $s and .giornata == $g and ((.tipo // "cronaca") == $t))' > /dev/null; then
                 ONLINE=1
                 break
               fi

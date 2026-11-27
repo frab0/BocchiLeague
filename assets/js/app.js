@@ -128,6 +128,10 @@ const locandina = (sid, n) => CFG.locandine?.includes(`${sid}-${n}`) ? `<section
   <div class="poster-act"><button type="button" class="btn primary" data-share="assets/img/locandine/${sid}-${n}.png" data-nome="bocchi-league-${sid}-g${n}.png">Condividi</button><a class="btn" href="assets/img/locandine/${sid}-${n}.png" download="bocchi-league-${sid}-g${n}.png">Scarica</a></div></div>
 </section>` : '';
 const doc = f => /^https?:/.test(f) ? f : (CFG.docBase || '') + f;
+const isPre = a => a.tipo === 'pronostici';
+const linkArt = a => `#gazzetta-${a.stagione}-${a.giornata}${isPre(a) ? '-pronostici' : ''}`;
+const tagArt = a => isPre(a) ? '<span class="tag pre">Pronostici</span>' : '<span class="tag post">Cronaca</span>';
+const issueArt = (a, sotto) => `<a class="issue${isPre(a) ? ' pre' : ''}" href="${linkArt(a)}"><span class="n">${a.giornata}</span><span><small>${tagArt(a)}${sotto}</small><h3>${esc(a.titolo)}</h3></span></a>`;
 const navBtn = (sid, n, t) => n != null ? `<a class="btn" href="#giornate-${sid}-${n}">${t}</a>` : `<span class="btn" aria-disabled="true">${t}</span>`;
 const totale = id => CFG.totaleGiornate?.[id] ?? 38;
 
@@ -153,10 +157,10 @@ V.home = async () => {
     </div>
   </section>
   ${art ? `<section class="section">
-    <span class="kicker">Giornata ${art.giornata} · ${lbl(art.stagione)}</span>
+    <span class="kicker${isPre(art) ? ' pre' : ''}">${isPre(art) ? 'Pronostici · ' : ''}Giornata ${art.giornata} · ${lbl(art.stagione)}</span>
     <h2 style="font-size:clamp(34px,9vw,56px);line-height:.98">${esc(art.titolo)}</h2>
     <p class="mute" style="max-width:60ch">${esc(art.sommario)}</p>
-    <a class="btn primary" style="justify-self:start" href="#gazzetta-${art.stagione}-${art.giornata}">Leggi la Gazzetta</a>
+    <a class="btn primary${isPre(art) ? ' pre' : ''}" style="justify-self:start" href="${linkArt(art)}">${isPre(art) ? 'Leggi i pronostici' : 'Leggi la Gazzetta'}</a>
   </section>` : ''}
 
   <section class="section">
@@ -266,20 +270,21 @@ V.giornate = async (sid, n) => {
   const st = S[sid];
   if (!st.haDati) return `<div class="view"><div class="head"><h2>Giornate</h2></div>${chipsStagione(sid, 'giornate')}
     ${vuoto(`Giornate ${lbl(sid)} in arrivo`, sid === CFG.stagioneCorrente ? 'Risultati, formazioni e punteggi compariranno qui con il primo aggiornamento.' : 'Per questa stagione abbiamo solo la classifica finale.', `<a class="btn" href="#classifica-${sid}">Vai alla classifica</a>`)}</div>`;
+  const gaz = await load('gazzetta');
   const fut = (st.prossime || []).find(x => x.n === +n);
-  if (fut) return giornataFutura(st, fut);
+  if (fut) return giornataFutura(st, fut, gaz);
   const G = st.giornate;
   const g = G.find(x => x.n === +n) || st.ultima;
   const i = G.indexOf(g);
   const form = CFG.formazioni?.includes(sid);
-  const art = (await load('gazzetta')).find(a => a.stagione === sid && a.giornata === g.n);
+  const arts = gaz.filter(a => a.stagione === sid && a.giornata === g.n).sort((a, b) => isPre(a) - isPre(b));
   const pun = Object.entries(g.punteggi).sort((a, b) => b[1] - a[1]);
   const maxP = pun[0][1], minP = Math.min(...pun.map(x => x[1])) - 8;
   return `<div class="view">
     <div class="head"><h2>Giornata ${g.n}</h2><p>Stagione ${lbl(sid)}${g.serieA ? ` · ${g.serieA}ª di Serie A` : ''}</p></div>
     ${chipsStagione(sid, 'giornate')}
     ${chipsGiornate(st, g.n)}
-    ${art ? `<a class="issue" href="#gazzetta-${sid}-${g.n}"><span class="n">${g.n}</span><span><small>La Gazzetta Bocchi League</small><h3>${esc(art.titolo)}</h3></span></a>` : ''}
+    ${arts.map(a => issueArt(a, 'La Gazzetta Bocchi League')).join('')}
     <section class="section"><div class="matches" id="partite">${g.partite.map((p, k) => matchCard(st, g, p, k, form)).join('')}</div></section>
     <div class="gsplit">
       <section class="card section"><h3>Punteggi di giornata</h3><div class="bars">${pun.map(([t, v], k) => `<div class="bar"><span class="t${k === 0 ? ' best' : ''}"><i style="width:${((v - minP) / (maxP - minP) * 100).toFixed(1)}%"></i>${esc(t)}</span><span class="num">${fp(v)}</span></div>`).join('')}</div></section>
@@ -295,12 +300,13 @@ function chipsGiornate(st, att) {
 }
 const fixture = (sid, p) => `<article class="match"><span class="sb"><span class="s">${badge(p.casa, sid, 30)}<b>${esc(sigla(p.casa))}</b></span><span class="x vs">VS</span><span class="s r">${badge(p.trasferta, sid, 30)}<b>${esc(sigla(p.trasferta))}</b></span></span><span class="names"><span>${esc(p.casa)}</span><span>${esc(p.trasferta)}</span></span></article>`;
 const teamCellInner = (team, sid) => `<span><b>${esc(team)}</b><small>${esc(mister(sid, team))}</small></span>`;
-function giornataFutura(st, f) {
+function giornataFutura(st, f, gaz = []) {
   const i = st.prossime.indexOf(f), prev = i ? st.prossime[i - 1].n : st.ultima?.n, next = st.prossime[i + 1]?.n;
   return `<div class="view">
     <div class="head"><h2>Giornata ${f.n}</h2><p>Stagione ${lbl(st.id)} · ${f.serieA}ª di Serie A · da giocare</p></div>
     ${chipsStagione(st.id, 'giornate')}
     ${chipsGiornate(st, f.n)}
+    ${gaz.filter(a => a.stagione === st.id && a.giornata === f.n).map(a => issueArt(a, 'La Gazzetta Bocchi League')).join('')}
     <div class="matches">${f.partite.map(p => fixture(st.id, p)).join('')}</div>
     <div class="nav-g">${navBtn(st.id, prev, 'Precedente')}${navBtn(st.id, next, 'Successiva')}</div>
   </div>`;
@@ -445,11 +451,12 @@ V.rose = async (sid, team) => {
 V.gazzetta = async (sid, n) => {
   const gaz = await load('gazzetta');
   if (sid && n) {
-    const a = gaz.find(x => x.stagione === sid && x.giornata === +n);
-    if (a) return articolo(a);
+    const [num, tipo] = String(n).split('-');
+    const a = gaz.find(x => x.stagione === sid && x.giornata === +num && isPre(x) === (tipo === 'pronostici'));
+    if (a) return isPre(a) ? pronostici(a) : articolo(a);
   }
-  return `<div class="view"><div class="head"><h2>La Gazzetta Bocchi League</h2><p>Il racconto di ogni giornata: risultati, sorpassi, record e le parole dei Mister.</p></div>${botLega()}
-    <div style="display:grid;gap:8px;max-width:760px">${gaz.map(a => `<a class="issue" href="#gazzetta-${a.stagione}-${a.giornata}"><span class="n">${a.giornata}</span><span><small>Giornata ${a.giornata} · ${lbl(a.stagione)} · ${data(a.data)}</small><h3>${esc(a.titolo)}</h3></span></a>`).join('')}</div></div>`;
+  return `<div class="view"><div class="head"><h2>La Gazzetta Bocchi League</h2><p>Prima di ogni giornata i pronostici, dopo il racconto: risultati, sorpassi, record e le parole dei Mister.</p></div>${botLega()}
+    <div style="display:grid;gap:8px;max-width:760px">${gaz.map(a => issueArt(a, `Giornata ${a.giornata} · ${lbl(a.stagione)} · ${data(a.data)}`)).join('')}</div></div>`;
 };
 function articolo(a) {
   const st = S[a.stagione], g = st.giornate.find(x => x.n === a.giornata);
@@ -464,12 +471,53 @@ function articolo(a) {
     ${a.pezzi.map(z => `<section class="section">
       ${g ? matchCard(st, g, g.partite[z.partita], z.partita, false) : ''}
       <h2>${esc(z.titolo)}</h2>
-      <div class="body section">${z.testo.map(t => `<p>${esc(t)}</p>`).join('')}</div>
-      ${(z.dichiarazioni || []).map(d => `<div class="quote"><b>${esc(d.ruolo || 'Parla il Mister')} · ${esc(d.mister)}</b><p>“${esc(d.testo)}”</p></div>`).join('')}
+      ${pezzoConCitazioni(z)}
     </section>`).join('')}
     ${a.top ? `<div class="topflop"><div><span class="k" style="color:var(--win)">TOP DELLA GIORNATA</span><span class="big">${fp(a.top.valore)}</span><b>${esc(a.top.squadra)}</b><small class="mute">${esc(a.top.nota)}</small></div><div><span class="k" style="color:var(--red)">FLOP DELLA GIORNATA</span><span class="big">${fp(a.flop.valore)}</span><b>${esc(a.flop.squadra)}</b><small class="mute">${esc(a.flop.nota)}</small></div></div>` : ''}
+    ${a.mago ? `<div class="oracle-box"><span class="k">Pronostici azzeccati</span><b>${a.mago.indovinati} su ${a.mago.totali}</b><p>${esc(a.mago.nota)}</p></div>` : ''}
     ${g ? `<section class="section"><h2>La classifica dopo la ${g.n}ª</h2><div class="card" style="padding:4px 12px">${g.classifica.map(r => `<div style="display:grid;grid-template-columns:30px minmax(0,1fr) 20px 40px;gap:10px;align-items:center;min-height:50px;border-bottom:1px solid var(--line)"><span class="num" style="font-size:22px;text-align:center;color:${r.pos === 1 ? 'var(--red)' : 'var(--faint)'}">${r.pos}</span>${teamCell(r.squadra, st.id, 28)}${mov(r.squadra)}<span class="num" style="font-size:24px;text-align:right">${r.pt}</span></div>`).join('')}</div></section>` : ''}
     ${locandina(a.stagione, a.giornata)}
+    ${a.chiusura ? `<section class="section"><h2>${esc(a.chiusura.titolo)}</h2><div class="body"><p>${esc(a.chiusura.testo)}</p></div></section>` : ''}
+  </article></div>`;
+}
+
+// Testo del pezzo con le dichiarazioni: chi ha "dopo" va sotto quel paragrafo, le altre in fondo.
+function pezzoConCitazioni(z) {
+  const q = d => `<div class="quote"><b>${esc(d.ruolo || 'Parla il Mister')} · ${esc(d.mister)}</b><p>“${esc(d.testo)}”</p></div>`;
+  const ds = z.dichiarazioni || [];
+  const sotto = i => ds.filter(d => d.dopo === i).map(q).join('');
+  return z.testo.map((t, i) => `<div class="body section"><p>${esc(t)}</p></div>${sotto(i)}`).join('')
+    + ds.filter(d => typeof d.dopo !== 'number').map(q).join('');
+}
+
+function pronostici(a) {
+  const st = S[a.stagione];
+  const f = (st.prossime || []).find(x => x.n === a.giornata) || st.giornate.find(x => x.n === a.giornata);
+  const partite = f?.partite || [];
+  const vigilia = st.giornate.find(x => x.n === a.giornata - 1);
+  const segno = r => { const [c, t] = r.split('-').map(Number); return c > t ? '1' : c < t ? '2' : 'X'; };
+  const card = p => `<article class="match"><span class="sb full"><span class="s">${badge(p.casa, st.id, 30)}<b>${esc(p.casa)}</b></span><span class="x pro vs">VS</span><span class="s r">${badge(p.trasferta, st.id, 30)}<b>${esc(p.trasferta)}</b></span></span></article>`;
+  const R = a.rubriche || {};
+  const box = (r, k) => r ? `<div class="oracle-box"><span class="k">${k}</span>${r.squadra ? `<b>${esc(r.squadra)}</b>` : ''}<p>${esc(r.testo)}</p></div>` : '';
+  return `<div class="view"><article class="paper pre">
+    <a href="#gazzetta" class="mute" style="text-decoration:none;font-size:14px">← La Gazzetta Bocchi League</a>
+    <span class="kicker pre">Pronostici · Giornata ${a.giornata}${f?.serieA ? ` · ${f.serieA}ª di Serie A` : ''}</span>
+    <h1 style="font-size:clamp(36px,10vw,60px)">${esc(a.titolo)}</h1>
+    <p class="lead">${esc(a.sommario)}</p>
+    <span class="by">Redazione federale · ${data(a.data)}</span>
+    ${a.pezzi.map(z => `<section class="section">
+      ${partite[z.partita] ? card(partite[z.partita]) : ''}
+      <h2>${esc(z.titolo)}</h2>
+      ${pezzoConCitazioni(z)}
+    </section>`).join('')}
+    <section class="section"><h2>La schedina</h2><div class="card schedina">${a.pezzi.filter(z => partite[z.partita]).map(z => `<div class="riga"><span>${esc(partite[z.partita].casa)} – ${esc(partite[z.partita].trasferta)}</span><span class="segno">${segno(z.pronostico)}</span><span class="num">${esc(z.pronostico)}</span></div>`).join('')}</div></section>
+    ${(a.precedenti || []).length ? `<section class="section"><h2>I precedenti</h2>${a.precedenti.map(h => { const p = partite[h.partita]; return p ? `<div class="card h2h">
+      <div class="h2h-t"><span>${esc(p.casa)}</span><span>${esc(p.trasferta)}</span></div>
+      <div class="h2h-n"><span><b>${h.vc}</b>vittorie</span><span><b>${h.n}</b>pareggi</span><span><b>${h.vt}</b>vittorie</span></div>
+      <p class="h2h-g">Gol: ${esc(h.gol)} · ${esc(h.dal || 'dal 2024/25')}</p>
+      ${(h.note || []).map(t => `<p>${esc(t)}</p>`).join('')}</div>` : ''; }).join('')}</section>`
+      : `<div class="oracle">${box(R.copertina, 'Uomo copertina')}${box(R.disastro, 'Candidato al disastro')}${box(R.vetta, 'La vetta')}${box(R.follia, 'La follia della settimana')}</div>`}
+    ${vigilia ? `<section class="section"><h2>La classifica alla vigilia</h2><div class="card" style="padding:8px 8px">${tabella(st, vigilia.classifica, false)}</div></section>` : ''}
     ${a.chiusura ? `<section class="section"><h2>${esc(a.chiusura.titolo)}</h2><div class="body"><p>${esc(a.chiusura.testo)}</p></div></section>` : ''}
   </article></div>`;
 }

@@ -1,5 +1,118 @@
 [
  {
+  "tipo": "pronostici",
+  "stagione": "26-27",
+  "giornata": 11,
+  "data": "2026-11-27",
+  "titolo": "\"La vittoria contro Bers? Mi sono segato in piazza\"",
+  "sommario": "Yara la racconta così, la vittoria della prima giornata contro l'attuale capolista: l'unica gioia di una stagione da ultimo in classifica. Stasera la rivincita, mentre frab si presenta già battuto e simobers si accusa da solo.",
+  "pezzi": [
+   {
+    "partita": 0,
+    "pronostico": "3-1",
+    "titolo": "Kefir, la favola continua",
+    "testo": [
+     "Settimana di lavoro intenso a casa Kefir, e lo conferma il mister: i sette gol non sono stati un caso. Martinez subisce molto, ammette, ma ci sarà.",
+     "Il Franciscum perde Calhanoglu e Kean, e dopo dieci giornate Pistolero parla ancora di squadra in rodaggio. Però dice di avere finalmente i numeri per tre attaccanti, e punge chi a settembre ha preso infortunati e ora sta ai vertici."
+    ],
+    "dichiarazioni": [
+     {
+      "mister": "Nico Pus",
+      "testo": "La vittoria di sette gol non è stata un caso: abbiamo lavorato durissimo.",
+      "dopo": 0
+     },
+     {
+      "mister": "Pistolero",
+      "testo": "Nel calcio, come nella vita, ci sono le categorie.",
+      "dopo": 1
+     }
+    ]
+   },
+   {
+    "partita": 1,
+    "pronostico": "3-3",
+    "titolo": "CortoMuso, l'imbattibilità passa dall'infermeria",
+    "testo": [
+     "Il CortoMuso non perde da cinque giornate, ma è senza Yildiz, Zaccagni e Grabara. E frab si dà già battuto contro una squadra che, dice, domina il campionato: è seconda.",
+     "L'OverPerformers ha il miglior attacco, 34 gol, ma perde Nuno Tavares. Su Ramon gpepss la mette così: il bomber del Como ora è lui, visto che Nico Paz è passato all'OverPerformers. E simobers? Un rivale come un altro."
+    ],
+    "dichiarazioni": [
+     {
+      "mister": "frab",
+      "testo": "Ti rendi conto di chi ho contro? Non sono in forma: parto sconfitto.",
+      "dopo": 0
+     },
+     {
+      "mister": "gpepss",
+      "testo": "Il principale marcatore del Como non è più Nico Paz, bensì Ramon: parlano i fatti.",
+      "dopo": 1
+     }
+    ]
+   },
+   {
+    "partita": 2,
+    "pronostico": "1-3",
+    "titolo": "Roggerdam, caccia al nono risultato utile",
+    "testo": [
+     "La Roggerdam non perde da otto giornate, anche senza Meret e Bartesaghi. simobers difende Pellegrino e si prende la colpa: secondo lui la sfiga la porta l'allenatore.",
+     "Il Betlemme non vince da cinque turni e Yara mette le mani avanti. simobers lo sfida: stasera può dimostrare di non essere la rosa più scarsa della lega."
+    ],
+    "dichiarazioni": [
+     {
+      "mister": "simobers",
+      "testo": "La squadra ha sempre risposto presente: è l'allenatore a dover fare le scelte giuste.",
+      "dopo": 0
+     },
+     {
+      "mister": "Yara Gambirasio",
+      "testo": "Il fantacalcio è sopravvalutato, e senza Raimondo è difficile portare a casa 3 punti.",
+      "dopo": 1
+     }
+    ]
+   }
+  ],
+  "rubriche": {},
+  "chiusura": {
+   "titolo": "Appuntamento al dopo-partita",
+   "testo": "Si comincia stasera con Venezia-Bologna, si chiude lunedì. Martedì mattina la cronaca."
+  },
+  "precedenti": [
+   {
+    "partita": 0,
+    "vc": 4,
+    "n": 3,
+    "vt": 10,
+    "gol": "24-42",
+    "note": [
+     "Pistolero è la bestia nera di Nico Pus: 10 vittorie su 17, e un 6-2 nel 2025 che fa ancora male.",
+     "Ma l'ultima l'ha vinta il Kefir, 4-1 alla sesta giornata. In casa del Franciscum."
+    ]
+   },
+   {
+    "partita": 1,
+    "vc": 9,
+    "n": 2,
+    "vt": 6,
+    "gol": "38-32",
+    "note": [
+     "Quest'anno 14 gol in due partite: 6-1 per gpepss alla prima, 4-3 per frab alla sesta. In totale 9 gol di gpepss e 5 di frab.",
+     "E il pareggino che frab sogna qui non arriva quasi mai: 2 in 17 partite."
+    ]
+   },
+   {
+    "partita": 2,
+    "vc": 5,
+    "n": 5,
+    "vt": 6,
+    "gol": "37-39",
+    "note": [
+     "La sfida più equilibrata della lega: anche la media fantapunti è quasi identica, 73,6 contro 73,8.",
+     "In casa Yara ha vinto le ultime due, tutte e due 4-2. Stasera si gioca al Betlemme."
+    ]
+   }
+  ]
+ },
+ {
   "stagione": "26-27",
   "giornata": 10,
   "data": "2026-11-24",
