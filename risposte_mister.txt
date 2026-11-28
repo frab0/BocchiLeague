@@ -1,3 +1,4 @@
 frab (SC CortoMuso): Domanda: Doomanda2? | Risposta: "Risp 1 per domanda 2"
 frab (SC CortoMuso): Domanda: Doomanda3? | Risposta: "Risp 2 per doman 3"
 frab (SC CortoMuso): Domanda: Doomanda1? | Risposta: "Risp 3 per dom 1"
+frab (SC CortoMuso): Domanda: Doomanda1? | Risposta: "Risp 4 per dom1"
